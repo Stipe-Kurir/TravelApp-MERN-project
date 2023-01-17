@@ -25,3 +25,34 @@ label{
 .date{
     font-size: 12px;
 }
+
+form{
+    width:250;
+    height:250;
+    display:flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+input,textarea{
+    border:none;
+    border-bottom: 1px solid gray;
+}
+
+input::placeholder, textarea::placeholder{
+    font-size: 12px;
+    color:rgb(193, 189, 189);
+
+}
+select{
+    margin-bottom: 10px;
+    background-color:white;
+}
+.submitButton{
+    border:none;
+    padding:5px;
+    border-radius: 5px;
+    color:white;
+    background-color: tomato;
+    cursor:pointer;
+}

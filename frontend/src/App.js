@@ -1,18 +1,20 @@
 import React,{useEffect, useState} from 'react';
-import ReactMapGL,{Marker,Popup} from 'react-map-gl';
+import Map,{Marker,Popup,NavigationControl} from 'react-map-gl';
+
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {Room,Star} from "@material-ui/icons";
 import "./app.css";
 import axios from "axios";
-import {fomrat, format} from "timeago.js";
+import { format} from "timeago.js";
 
 function App() {
   const currentUser="josip";
   const [pins,setPins]=useState([]);
   const [currentPlaceId,setCurrentPlaceId]=useState(null);
+  const [newPlace,setNewPlace]=useState(null);
   const [viewport, setViewport] = useState({
-    latitude:46,
     longitude: 17,
+    latitude:46,
     zoom: 4,
   });
 
@@ -26,22 +28,40 @@ function App() {
       }
     };
     getPins();
-  },[])
+  },[]);
 
-const handleMarkerClick=(id)=>{
-  setCurrentPlaceId(id)
+const handleMarkerClick=(id, lat, long)=>{
+  setCurrentPlaceId(id);
+  setViewport({...viewport,
+    latitude:lat,
+    longitude: long,
+  });
+};
+
+
+const handleAddClick=(e)=>{
+  
+  const kordinateLat=e.lngLat.lat;
+  const kordinateLong=e.lngLat.lng;
+  setNewPlace({
+    lat:kordinateLat,
+    long:kordinateLong,
+  });
+
+ console.log(e);
 }
-
 
 
   return (
   <div>
-  <ReactMapGL
-    initialViewState={viewport}
+  <Map
+    {...viewport}
     style={{width: '100vw', height: '100vh'}}
-    mapStyle="mapbox://styles/mapbox/streets-v9"
+    mapStyle="mapbox://styles/safak/cknndpyfq268f17p53nmpwira"
     mapboxAccessToken={process.env.REACT_APP_MAPBOX}
-    onViewportChange={nextViewport=>setViewport(nextViewport)}
+    onViewportChange={(viewport)=>setViewport(viewport)}
+    onDblClick={handleAddClick}
+    transitionDuration="500"
   >
 
 {pins.map((p)=>(
@@ -55,7 +75,7 @@ const handleMarkerClick=(id)=>{
    color: p.username===currentUser? "tomato":"slateblue",
     cursor:"pointer",
   }}
-    onClick={()=>handleMarkerClick(p._id)}
+    onClick={()=>handleMarkerClick(p._id,p.lat,p.long)}
    />
  </Marker>
 
@@ -88,13 +108,42 @@ const handleMarkerClick=(id)=>{
   </div>
 
   </Popup>
-)
-}
+)}
 </>
-
 ))}
 
-    </ReactMapGL>
+{newPlace && (
+<Popup   
+    latitude={newPlace.lat}
+    longitude={newPlace.long}
+    closeButton={true}
+    closeOnClick={false}
+    anchor="left"
+    onClose={()=>setNewPlace(null)}
+  >
+    <div>
+      <form>
+      <label>Title</label>
+      <input placeholder="Enter a title"></input>
+      <label>Review</label>
+      <textarea placeholder="Describe this place"></textarea>
+      <label>Rating</label>
+      <select>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+  <button className="submitButton" type="submit">ADD pin</button>
+      </form>
+    </div>
+
+  </Popup>
+
+)}
+
+    </Map>
   </div>
   );
 }
@@ -102,13 +151,4 @@ const handleMarkerClick=(id)=>{
 export default App;
 
 
-
-/*{
-    "username":"stipe",
-    "title":"split",
-    "desc":"lipo sam se proveo",
-    "rating":5,
-    "lat":123,
-    "long":123
-} */
 
