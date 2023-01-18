@@ -17,6 +17,11 @@ function App() {
     latitude:46,
     zoom: 4,
   });
+  const [title,setTitle]=useState(null);
+  const [desc,setDesc]=useState(null);
+  const [rating,setRating]=useState(1);
+
+
 
   useEffect(()=>{
     const getPins=async ()=>{
@@ -51,6 +56,26 @@ const handleAddClick=(e)=>{
  console.log(e);
 }
 
+const handleSubmit= async (e)=>{
+  e.preventDefault();
+  const newPin={
+    username:currentUser,
+    title,
+    desc,
+    rating,
+    lat:newPlace.lat,
+    long:newPlace.long,
+  }
+  try{
+    const res=await axios.post("/pins",newPin);
+    setPins([...pins,res.data]);
+    setNewPlace(null);
+  }catch(err)
+  {
+    console.log(err);
+  }
+};
+
 
   return (
   <div>
@@ -68,8 +93,8 @@ const handleAddClick=(e)=>{
 <>
  <Marker latitude={p.lat} 
  longitude={p.long}
- offsetLeft={-20}
- offsetRight={-10}
+ offsetLeft={-viewport.zoom*5}
+ offsetRight={-viewport.zoom*10}
  >
    <Room style={{fontSize:viewport.zoom*10, 
    color: p.username===currentUser? "tomato":"slateblue",
@@ -96,11 +121,9 @@ const handleAddClick=(e)=>{
    <p className="desc"> {p.desc}</p>
    <label> Rating</label>
    <div className="stars">
-   <Star className="star"/>
-   <Star className="star"/>
-   <Star className="star"/>
-   <Star className="star"/>
-   <Star className="star"/>
+    {
+    Array(p.rating).fill(<Star className="star"/>)
+    }
    </div>
    <label> Information</label>
    <span className="username">Created by: <b>{p.username} </b></span>
@@ -122,13 +145,13 @@ const handleAddClick=(e)=>{
     onClose={()=>setNewPlace(null)}
   >
     <div>
-      <form>
+      <form onSubmit={handleSubmit}>
       <label>Title</label>
-      <input placeholder="Enter a title"></input>
+      <input placeholder="Enter a title" onChange={(e)=>setTitle(e.target.value)}></input>
       <label>Review</label>
-      <textarea placeholder="Describe this place"></textarea>
+      <textarea placeholder="Describe this place" onChange={(e)=>setDesc(e.target.value)}></textarea>
       <label>Rating</label>
-      <select>
+      <select onChange={(e)=>setRating(e.target.value)}>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
