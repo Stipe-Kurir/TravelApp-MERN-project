@@ -70,6 +70,7 @@ select{
 }
 .login{
     background-color: teal;
+    margin-right: 5px;
 }
 .register{
     background-color: slateblue;

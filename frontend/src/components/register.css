@@ -21,6 +21,7 @@
     display:flex;
     align-items: center;
     font-weight: 700;
+    font-size: 20px;
 }
 
     
@@ -41,6 +42,7 @@
 .failure{
     color:red;
     text-align: center;
+    font-size:12px;
 }
 
 form{
@@ -48,4 +50,10 @@ form{
     height: 200px;
     justify-content: space-between;
     margin: 10px 10px;
+}
+.registerCancel{
+    position: absolute;
+    top:5px;
+    right:5px;
+    cursor: pointer;
 }
