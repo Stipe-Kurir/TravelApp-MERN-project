@@ -1,11 +1,11 @@
-import React, { useRef } from 'react';
+
 import "./login.css"
 import {Cancel, Room} from "@material-ui/icons";
-import { useState } from "react";
+import { useState,useRef } from "react";
 import axios from "axios";
 
 
-export default function Login ({setShowLogin}) {
+export default function Login ({setShowLogin, setCurrentUser,myStorage}) {
 
   const nameRef=useRef();
   const passwordRef=useRef();
@@ -18,8 +18,10 @@ export default function Login ({setShowLogin}) {
       password:passwordRef.current.value,
     };
     try{
-      await axios.post("/users/login",user);
-      setError(false);
+      const res= await axios.post("/users/login",user);
+      setCurrentUser(res.data.username);
+      myStorage.setItem("user", res.data.username);
+      setShowLogin(false);
     }catch(err){
       setError(true);
       console.log(err);
@@ -35,7 +37,7 @@ export default function Login ({setShowLogin}) {
         <form onSubmit={handleSubmit}>
             <input type="text" placeholder="username" ref={nameRef}/>
             <input type="password" placeholder="password" ref={passwordRef}/>
-            <button className="loginBtn">Login</button>
+            <button className="loginBtn" type="submit">Login</button>
             {error && ( <span className="failure">Something went wrong!</span>)}
           </form> 
           <Cancel className="loginCancel" onClick={()=>setShowLogin(false)}/>

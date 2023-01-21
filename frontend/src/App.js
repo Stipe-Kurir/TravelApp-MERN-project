@@ -1,6 +1,5 @@
 import React,{useEffect, useState} from 'react';
-import Map,{Marker,Popup,NavigationControl} from 'react-map-gl';
-
+import Map,{Marker,Popup} from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {Room,Star} from "@material-ui/icons";
 import "./app.css";
@@ -10,7 +9,8 @@ import Register from './components/Register';
 import Login from "./components/Login";
 
 function App() {
-  const [currentUser,setCurrentUser]=useState(null);
+  const myStorage=window.localStorage;
+  const [currentUser,setCurrentUser]=useState(myStorage.getItem("user"));
   const [pins,setPins]=useState([]);
   const [currentPlaceId,setCurrentPlaceId]=useState(null);
   const [newPlace,setNewPlace]=useState(null);
@@ -48,6 +48,10 @@ const handleMarkerClick=(id, lat, long)=>{
   });
 };
 
+const handleLogout =()=>{
+  myStorage.removeItem("user");
+  setCurrentUser(null);
+}
 
 const handleAddClick=(e)=>{
   
@@ -85,39 +89,42 @@ const handleSubmit= async (e)=>{
   return (
   <div>
   <Map
-    {...viewport}
+    initialViewState={viewport}
     style={{width: '100vw', height: '100vh'}}
     mapStyle="mapbox://styles/safak/cknndpyfq268f17p53nmpwira"
     mapboxAccessToken={process.env.REACT_APP_MAPBOX}
     onViewportChange={(viewport)=>setViewport(viewport)}
-    onDblClick={handleAddClick}
+    onDblClick={currentUser && handleAddClick}
     transitionDuration="500"
   >
 
 {pins.map((p)=>(
 <>
- <Marker latitude={p.lat} 
+ <Marker 
+ latitude={p.lat} 
  longitude={p.long}
  offsetLeft={-viewport.zoom*5}
  offsetRight={-viewport.zoom*10}
  >
-   <Room style={{fontSize:viewport.zoom*10, 
-   color: p.username===currentUser? "tomato":"slateblue",
-    cursor:"pointer",
+   <Room 
+   style={{fontSize:viewport.zoom*10, 
+   color: currentUser === p.username ? "tomato":"slateblue",
+   cursor:"pointer",
   }}
-    onClick={()=>handleMarkerClick(p._id,p.lat,p.long)}
+    onClick={() => handleMarkerClick(p._id, p.lat, p.long)}
    />
  </Marker>
 
 {p._id === currentPlaceId && (
 
    <Popup   
+    key={p._id}
     latitude={p.lat}
     longitude={p.long}
     closeButton={true}
     closeOnClick={false}
     anchor="left"
-    onClose={()=>setCurrentPlaceId(null)}
+    onClose={() => setCurrentPlaceId(null)}
   >
   <div className="card">
    <label> Place</label>
@@ -140,7 +147,24 @@ const handleSubmit= async (e)=>{
 </>
 ))}
 
+
 {newPlace && (
+<>
+  <Marker
+      latitude={newPlace.lat}
+      longitude={newPlace.long}
+      offsetLeft={-3.5 * viewport.zoom}
+      offsetTop={-7 * viewport.zoom}
+            >
+    <Room
+       style={{
+      fontSize: 7 * viewport.zoom,
+      color: "tomato",
+      cursor: "pointer",
+      }}
+     />
+    </Marker>
+
 <Popup   
     latitude={newPlace.lat}
     longitude={newPlace.long}
@@ -150,11 +174,11 @@ const handleSubmit= async (e)=>{
     onClose={()=>setNewPlace(null)}
   >
     <div>
-      <form onSubmit={handleSubmit}>
+      <form  onSubmit={handleSubmit}>
       <label>Title</label>
-      <input placeholder="Enter a title" onChange={(e)=>setTitle(e.target.value)}></input>
+      <input placeholder="Enter a title" onChange={(e)=>setTitle(e.target.value)}/>
       <label>Review</label>
-      <textarea placeholder="Describe this place" onChange={(e)=>setDesc(e.target.value)}></textarea>
+      <textarea placeholder="Describe this place" onChange={(e)=>setDesc(e.target.value)}/>
       <label>Rating</label>
       <select onChange={(e)=>setRating(e.target.value)}>
         <option value="1">1</option>
@@ -163,25 +187,32 @@ const handleSubmit= async (e)=>{
         <option value="4">4</option>
         <option value="5">5</option>
       </select>
-  <button className="submitButton" type="submit">ADD pin</button>
+      <button className="submitButton" type="submit">Add pin</button>
       </form>
     </div>
-
   </Popup>
-
+ </>
 )}
-{currentUser ? ( <button className="button logout">Log out</button>):( 
+
+{currentUser ? ( 
+<button className="button logout" onClick={handleLogout}>Log out</button>
+):( 
   <div className="buttons">
-  <button className="button login" onClick={()=>setShowLogin(true)}>Login</button>
+  <button className="button login" onClick={() => setShowLogin(true)}>Login</button>
   <button className="button register" onClick={()=>setShowRegister(true)}>Register</button>
-  </div>)}
+  </div>
+  )}
   
-  {showRegister &&
+  {showRegister && (
   <Register setShowRegister={setShowRegister}/>
-  }
-  {showLogin &&
-  <Login setShowLogin={setShowLogin}/>
-  }
+  )}
+  {showLogin && (
+  <Login 
+  setShowLogin={setShowLogin} 
+  setCurrentUser={setCurrentUser} 
+  myStorage={myStorage}
+  />
+  )}
     </Map>
   </div>
   );

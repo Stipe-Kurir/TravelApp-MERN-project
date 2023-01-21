@@ -27,14 +27,26 @@ label{
 }
 
 form{
-    width:250;
-    height:250;
+    width:250px;
+    height:250px;
     display:flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-around;
+    color: rgb(88, 87, 87);
 }
 
-input,textarea{
+input {
+    border: none;
+    border-bottom: 1px solid gray;
+  }
+  textarea {
+    border: none;
+    border-bottom: 1px solid gray;
+  }
+  
+
+
+input:focus,textarea:focus{
     border:none;
     border-bottom: 1px solid gray;
 }
@@ -50,7 +62,7 @@ select{
 }
 .submitButton{
     border:none;
-    padding:5px;
+    padding:5px; 
     border-radius: 5px;
     color:white;
     background-color: tomato;
@@ -63,6 +75,7 @@ select{
     border-radius: 5px;
     color:white;
     cursor:pointer;
+    font-weight: 500;
 }
 
 .logout{

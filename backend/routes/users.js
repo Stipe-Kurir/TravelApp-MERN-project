@@ -1,4 +1,4 @@
-const router=require("express").Router();
+const router= require("express").Router();
 const User=require("../models/User");
 const bcrypt= require("bcrypt");
 
@@ -25,6 +25,7 @@ router.post("/register",async(req,res)=>{
 
     }catch(err)
     {
+        console.log(err);
         res.status(500).json(err);
     }
 })
@@ -43,7 +44,7 @@ router.post("/login", async(req,res)=>{
             user.password);
             !validPassword && res.status(400).json("Wrong username or password!");
         //send res
-        res.status(200).json({_id:user._id, username:username});
+        res.status(200).json({_id:user._id, username:user.username});
 
     }
     catch(err){
