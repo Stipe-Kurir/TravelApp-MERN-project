@@ -39,19 +39,13 @@ input {
     border: none;
     border-bottom: 1px solid gray;
   }
-  textarea {
-    border: none;
-    border-bottom: 1px solid gray;
-  }
-  
-
-
-input:focus,textarea:focus{
+ 
+input:focus{
     border:none;
     border-bottom: 1px solid gray;
 }
 
-input::placeholder, textarea::placeholder{
+input::placeholder{
     font-size: 12px;
     color:rgb(193, 189, 189);
 

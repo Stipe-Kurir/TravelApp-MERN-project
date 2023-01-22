@@ -178,7 +178,7 @@ const handleSubmit= async (e)=>{
       <label>Title</label>
       <input placeholder="Enter a title" onChange={(e)=>setTitle(e.target.value)}/>
       <label>Review</label>
-      <textarea placeholder="Describe this place" onChange={(e)=>setDesc(e.target.value)}/>
+      <input placeholder="Describe this place" onChange={(e)=>setDesc(e.target.value)}/>
       <label>Rating</label>
       <select onChange={(e)=>setRating(e.target.value)}>
         <option value="1">1</option>
